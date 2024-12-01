@@ -1,0 +1,13 @@
+*.tgz
+npm-debug.log*
+.npm
+.eslintcache
+.idea/
+coverage/
+.env*
+
+**/*.spec.js
+.node-version
+.editorconfig
+eslint.config.js
+jest.config.js
