@@ -1,10 +1,6 @@
 import _ from "lodash";
 
-/**
- * @param {Array<string>} input Puzzle input
- * @return {string} Puzzle output
- */
-export function part1(input) {
+function parseInput(input) {
   const numbers = _(input)
     .map((line) =>
       _(line)
@@ -21,6 +17,25 @@ export function part1(input) {
     .map(([, n]) => n)
     .sortBy()
     .value();
+  return { lhs, rhs };
+}
+
+function count(arr, n) {
+  let r = 0;
+  for (const elem of arr) {
+    if (elem === n) {
+      ++r;
+    }
+  }
+  return r;
+}
+
+/**
+ * @param {Array<string>} input Puzzle input
+ * @return {string} Puzzle output
+ */
+export function part1(input) {
+  const { lhs, rhs } = parseInput(input);
   return _(_.zip(lhs, rhs))
     .map(([lhs, rhs]) => Math.abs(lhs - rhs))
     .sum();
@@ -31,5 +46,8 @@ export function part1(input) {
  * @return {string} Puzzle output
  */
 export function part2(input) {
-  return "TODO";
+  const { lhs, rhs } = parseInput(input);
+  return _(lhs)
+    .map((n) => n * count(rhs, n))
+    .sum();
 }
