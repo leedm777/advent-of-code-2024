@@ -31,10 +31,30 @@ export function part1(input) {
   return safeReports.length;
 }
 
+function isSafeWithDampener(report) {
+  if (isSafe(report)) {
+    return true;
+  }
+
+  // try deleting each element individually. there's probably a better way,
+  // but this works fast enough.
+  for (let i = 0; i < report.length; ++i) {
+    const dampenedHead = _.slice(report, 0, i);
+    const dampenedTail = _.slice(report, i + 1);
+    if (isSafe([...dampenedHead, ...dampenedTail])) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 /**
  * @param {Array<string>} input Puzzle input
  * @return {number} Puzzle output
  */
 export function part2(input) {
-  return "TODO";
+  const reports = parseInput(input);
+  const safeReports = _.filter(reports, isSafeWithDampener);
+  return safeReports.length;
 }
