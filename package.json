@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "prepare": "husky",
+    "start": "node src/main.js",
     "test": "NODE_OPTIONS='--experimental-vm-modules --disable-warning=ExperimentalWarning' jest"
   },
   "keywords": [
