@@ -13,23 +13,22 @@ year=${2:-$(date +%Y)}
 input=./src/day${day}.txt
 url=https://adventofcode.com/${year}/day/$((10#${day}))
 
-open ${url}
+if ! test -e "${input}"; then
+  curl \
+    --output "${input}" \
+    --fail \
+    --cookie .cookies.txt \
+    "${url}"/input
+fi
 
-if test -e src/day${day}.js; then
+if test -e src/day"${day}".js; then
   echo "day${day}.js already exists" >&2
   exit 1
 fi
 
-set -ex
-curl \
-  --output ${input} \
-  --fail \
-  --cookie .cookies.txt \
-  ${url}/input
+head "${input}"
 
-head ${input}
-
-cat <<EOF > src/day${day}.js
+cat <<EOF > "src/day${day}.js"
 import _ from "lodash";
 
 /**
@@ -49,7 +48,7 @@ export function part2(input) {
 }
 EOF
 
-cat <<EOF > src/day${day}.spec.js
+cat <<EOF > "src/day${day}.spec.js"
 import { part1, part2 } from "./day${day}";
 import { readInput } from "./aoc";
 
@@ -82,3 +81,5 @@ describe("day${day}", () => {
   });
 });
 EOF
+
+open "${url}"
