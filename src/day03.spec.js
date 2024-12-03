@@ -5,6 +5,9 @@ const puzzleInput = readInput("./src/day03.txt");
 const exampleInput = [
   "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))",
 ];
+const exampleInput2 = [
+  "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))",
+];
 
 describe("day03", () => {
   describe("part 1", () => {
@@ -19,15 +22,14 @@ describe("day03", () => {
     });
   });
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  describe.skip("part 2", () => {
+  describe("part 2", () => {
     it("should work with the sample", () => {
-      const actual = part2(exampleInput);
-      expect(actual).toStrictEqual();
+      const actual = part2(exampleInput2);
+      expect(actual).toStrictEqual(48);
     });
     it("should work with the puzzle input", () => {
       const actual = part2(puzzleInput);
-      expect(actual).toStrictEqual();
+      expect(actual).toStrictEqual(88802350);
     });
   });
 });
