@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-function parseInput(input) {
+function parseInput(input: string[]) {
   return _.map(input, (line) =>
     _(line)
       .split(" ")
@@ -9,11 +9,11 @@ function parseInput(input) {
   );
 }
 
-function isSafe(report) {
+function isSafe(report: number[]) {
   const shifted = _.drop(report);
   const delta = _(shifted)
     .zip(_.take(report, report.length - 1))
-    .map(([next, current]) => current - next)
+    .map(([next, current]) => (current || 0) - (next || 0))
     .value();
   return (
     _.every(delta, (d) => Math.abs(d) >= 1 && Math.abs(d) <= 3) &&
@@ -21,17 +21,13 @@ function isSafe(report) {
   );
 }
 
-/**
- * @param {Array<string>} input Puzzle input
- * @return {number} Puzzle output
- */
-export function part1(input) {
+export function part1(input: string[]) {
   const reports = parseInput(input);
   const safeReports = _.filter(reports, isSafe);
   return safeReports.length;
 }
 
-function isSafeWithDampener(report) {
+function isSafeWithDampener(report: number[]) {
   if (isSafe(report)) {
     return true;
   }
@@ -49,11 +45,7 @@ function isSafeWithDampener(report) {
   return false;
 }
 
-/**
- * @param {Array<string>} input Puzzle input
- * @return {number} Puzzle output
- */
-export function part2(input) {
+export function part2(input: string[]) {
   const reports = parseInput(input);
   const safeReports = _.filter(reports, isSafeWithDampener);
   return safeReports.length;

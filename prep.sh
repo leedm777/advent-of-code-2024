@@ -10,6 +10,10 @@ export TZ=America/New_York
 
 day=${1:-$(date +%d)}
 year=${2:-$(date +%Y)}
+
+# add leading 0 when manually entered
+day=$(printf "%02d" ${day})
+
 input=./src/day${day}.txt
 url=https://adventofcode.com/${year}/day/$((10#${day}))
 
@@ -21,34 +25,26 @@ if ! test -e "${input}"; then
     "${url}"/input
 fi
 
-if test -e src/day"${day}".js; then
-  echo "day${day}.js already exists" >&2
+if test -e src/day"${day}".ts; then
+  echo "day${day}.ts already exists" >&2
   exit 1
 fi
 
 head "${input}"
 
-cat <<EOF > "src/day${day}.js"
+cat <<EOF > "src/day${day}.ts"
 import _ from "lodash";
 
-/**
- * @param {Array<string>} input Puzzle input
- * @return {string} Puzzle output
- */
-export function part1(input) {
+export function part1(input: string[]) {
   return "TODO";
 }
 
-/**
- * @param {Array<string>} input Puzzle input
- * @return {string} Puzzle output
- */
-export function part2(input) {
+export function part2(input: string[]) {
   return "TODO";
 }
 EOF
 
-cat <<EOF > "src/day${day}.spec.js"
+cat <<EOF > "src/day${day}.spec.ts"
 import { part1, part2 } from "./day${day}";
 import { readInput } from "./aoc";
 
@@ -60,11 +56,11 @@ describe("day${day}", () => {
   describe("part 1", () => {
     it("should work with the sample", () => {
       const actual = part1(exampleInput);
-      expect(actual).toStrictEqual();
+      expect(actual).toStrictEqual("TODO");
     });
     it("should work with the puzzle input", () => {
       const actual = part1(puzzleInput);
-      expect(actual).toStrictEqual();
+      expect(actual).toStrictEqual("TODO");
     });
   });
 
@@ -72,11 +68,11 @@ describe("day${day}", () => {
   describe.skip("part 2", () => {
     it("should work with the sample", () => {
       const actual = part2(exampleInput);
-      expect(actual).toStrictEqual();
+      expect(actual).toStrictEqual("TODO");
     });
     it("should work with the puzzle input", () => {
       const actual = part2(puzzleInput);
-      expect(actual).toStrictEqual();
+      expect(actual).toStrictEqual("TODO");
     });
   });
 });

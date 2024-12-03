@@ -1,23 +1,15 @@
 import _ from "lodash";
 
-/**
- * @param {Array<string>} input Puzzle input
- * @return {number} Puzzle output
- */
-export function part1(input) {
-  input = _.join(input, "\n");
+export function part1(lines: string[]) {
+  const input = _.join(lines, "\n");
   const matches = input.matchAll(/mul\((\d{1,3}),(\d{1,3})\)/g);
   return _([...matches])
-    .map(([, lhs, rhs]) => lhs * rhs)
+    .map(([, lhs, rhs]) => parseInt(lhs, 10) * parseInt(rhs, 10))
     .sum();
 }
 
-/**
- * @param {Array<string>} input Puzzle input
- * @return {number} Puzzle output
- */
-export function part2(input) {
-  input = _.join(input, "\n");
+export function part2(lines: string[]) {
+  const input = _.join(lines, "\n");
   const matches = input.matchAll(
     /mul\((\d{1,3}),(\d{1,3})\)|do\(\)|don't\(\)/g,
   );
@@ -42,7 +34,7 @@ export function part2(input) {
       if (enabled) {
         return {
           enabled,
-          sum: sum + lhs * rhs,
+          sum: sum + parseInt(lhs, 10) * parseInt(rhs, 10),
         };
       }
 

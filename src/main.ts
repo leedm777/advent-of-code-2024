@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { readInput } from "./aoc.js";
+import { readInput } from "./aoc.ts";
 import { Command } from "commander";
 
 const program = new Command();
@@ -18,7 +18,7 @@ program
     _.range(1, 26),
   );
 
-async function main(argv) {
+async function main(argv: string[]) {
   program.parse(argv);
   const { only } = program.opts();
 
@@ -30,7 +30,7 @@ async function main(argv) {
       try {
         const dayStr = _.padStart(day.toString(10), 2, "0");
         const puzzleInput = readInput(`./src/day${dayStr}.txt`);
-        const solver = await import(`./day${dayStr}.js`);
+        const solver = await import(`./day${dayStr}.ts`);
 
         console.log(`Day ${day}:`);
 
@@ -47,7 +47,7 @@ async function main(argv) {
         console.log(
           `  part2: ${JSON.stringify(soln2, null, 2)} (${millis2} ms)`,
         );
-      } catch (err) {
+      } catch (err: unknown) {
         // ENOENT means the input file is missing; skip
         if (err.code === "ENOENT") {
           return;
