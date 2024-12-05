@@ -3,22 +3,7 @@ import { splitArray } from "./aoc.ts";
 
 type Rules = { [x: string]: number[] };
 
-function followsRules(rules: Rules) {
-  return (update: number[]) => {
-    for (let i = 0; i < update.length - 1; i++) {
-      const n = update[i];
-      const actual = _.slice(update, i + 1);
-      const allowed = rules[n];
-
-      if (!_.isEqual(_.intersection(actual, allowed), actual)) {
-        return false;
-      }
-    }
-    return true;
-  };
-}
-
-export function part1(input: string[]) {
+function parseInput(input: string[]) {
   const [rulesSection, updatesSection] = splitArray(
     input,
     (line) => line === "",
@@ -41,6 +26,26 @@ export function part1(input: string[]) {
       .map((s) => parseInt(s, 10))
       .value(),
   );
+  return { rules, updates };
+}
+
+function followsRules(rules: Rules) {
+  return (update: number[]) => {
+    for (let i = 0; i < update.length - 1; i++) {
+      const n = update[i];
+      const actual = _.slice(update, i + 1);
+      const allowed = rules[n];
+
+      if (!_.isEqual(_.intersection(actual, allowed), actual)) {
+        return false;
+      }
+    }
+    return true;
+  };
+}
+
+export function part1(input: string[]) {
+  const { rules, updates } = parseInput(input);
 
   return _(updates)
     .filter(followsRules(rules))
@@ -48,7 +53,23 @@ export function part1(input: string[]) {
     .sum();
 }
 
-// eslint-disable-next-line  @typescript-eslint/no-unused-vars
+function sortUpdate(rules: Rules) {
+  return (update: number[]) => {
+    return update.toSorted((a, b) => {
+      const empty: number[] = [];
+      if (_(rules).get(a, empty).includes(b)) return -1;
+      if (_(rules).get(b, empty).includes(a)) return 1;
+      if (a !== b) throw new Error(`No rule for ${a},${b}`);
+      return 0;
+    });
+  };
+}
+
 export function part2(input: string[]) {
-  return "TODO";
+  const { rules, updates } = parseInput(input);
+  return _(updates)
+    .reject(followsRules(rules))
+    .map(sortUpdate(rules))
+    .map((update) => update[(update.length - 1) / 2])
+    .sum();
 }
