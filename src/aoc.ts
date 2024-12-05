@@ -19,3 +19,22 @@ export function mod(a: number, n: number) {
   }
   return r;
 }
+
+export function splitArray<T>(arr: T[], fn: (elem: T) => boolean) {
+  if (_.isEmpty(arr)) {
+    return [];
+  }
+
+  return _.reduce(
+    arr,
+    (acc, elem) => {
+      if (fn(elem)) {
+        return [...acc, []];
+      }
+
+      const last = _.last(acc) || [];
+      return [..._.initial(acc), [...last, elem]];
+    },
+    [[]] as T[][],
+  );
+}
