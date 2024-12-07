@@ -11,12 +11,18 @@ function move(pos: number[], direction: number[]) {
   return _(pos).zip(direction).map(_.sum).value();
 }
 
-function parseInput(input: string[]) {
+type Map = {
+  grid: string[][];
+  guardPos: number[];
+  guardDir: number;
+};
+
+function parseInput(input: string[]): Map {
   let guardPos = [-1, -1];
-  const grid = _.map(input, (line, row) =>
-    _.map(line, (ch, col) => {
+  const grid = _.map(input, (line, rowNum) =>
+    _.map(line, (ch, colNum) => {
       if (ch === "^") {
-        guardPos = [row, col];
+        guardPos = [rowNum, colNum];
       }
       return ch;
     }),
@@ -24,8 +30,7 @@ function parseInput(input: string[]) {
   return { grid, guardPos, guardDir: 0 };
 }
 
-export function part1(input: string[]) {
-  const map = parseInput(input);
+function getVisited(map: Map) {
   const { grid } = map;
   let { guardPos, guardDir } = map;
   const visited = _.map(grid, (line) => _.map(line, _.constant(false)));
@@ -35,12 +40,18 @@ export function part1(input: string[]) {
       throw new Error("Merged with obstruction!!!");
     }
     _.set(visited, guardPos, true);
-    _.set(grid, guardPos, "X");
+    // _.set(grid, guardPos, "X");
     while (_.get(grid, move(guardPos, Directions[guardDir]), " ") === "#") {
       guardDir = (guardDir + 1) % Directions.length;
     }
     guardPos = move(guardPos, Directions[guardDir]);
   }
+  return visited;
+}
+
+export function part1(input: string[]) {
+  const map = parseInput(input);
+  const visited = getVisited(map);
 
   // console.log(
   //   _(grid)
@@ -51,7 +62,44 @@ export function part1(input: string[]) {
   return _(visited).map(_.sum).sum();
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function doesGuardLoop(map: Map) {
+  const { grid } = map;
+  let { guardPos, guardDir } = map;
+  const visited = _.map(grid, (line) => _.times(line.length, () => []));
+
+  while (_.get(visited, [...guardPos, guardDir], false) === false) {
+    if (_.get(grid, guardPos, " ") === " ") {
+      // guard escaped!!!
+      return false;
+    }
+    _.set(visited, [...guardPos, guardDir], true);
+    while (_.get(grid, move(guardPos, Directions[guardDir]), " ") === "#") {
+      guardDir = (guardDir + 1) % Directions.length;
+    }
+    guardPos = move(guardPos, Directions[guardDir]);
+  }
+
+  return true;
+}
+
 export function part2(input: string[]) {
-  return "TODO";
+  const map = parseInput(input);
+  const { grid, guardPos, guardDir } = map;
+  const visited = getVisited(map);
+
+  let numOptions = 0;
+  _.forEach(grid, (row, rowNum) => {
+    _.forEach(row, (ch, colNum) => {
+      if (ch === "." && _.get(visited, [rowNum, colNum], false)) {
+        // try placing an obstacle here
+        const nGrid = _.cloneDeep(grid);
+        _.set(nGrid, [rowNum, colNum], "#");
+        if (doesGuardLoop({ grid: nGrid, guardPos, guardDir })) {
+          ++numOptions;
+        }
+      }
+    });
+  });
+
+  return numOptions;
 }
