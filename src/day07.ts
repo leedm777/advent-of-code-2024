@@ -56,7 +56,60 @@ export function part1(input: string[]) {
     .sum();
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function numcat(lhs: number, rhs: number) {
+  return parseInt(`${lhs}${rhs}`, 10);
+}
+
+function solveEquationWithCat(
+  { expected, terms }: Equation,
+  acc: number = 0,
+): boolean {
+  if (terms.length === 0) {
+    return acc === expected;
+  }
+
+  if (acc > expected) {
+    return false;
+  }
+
+  const [firstTerm, ...restTerms] = terms;
+
+  const tryAdd = solveEquationWithCat(
+    { expected, terms: restTerms },
+    acc + firstTerm,
+  );
+  if (tryAdd) {
+    return true;
+  }
+
+  if (acc !== 0) {
+    const tryMultiply = solveEquationWithCat(
+      { expected, terms: restTerms },
+      acc * firstTerm,
+    );
+
+    if (tryMultiply) {
+      return true;
+    }
+
+    const tryCat = solveEquationWithCat(
+      { expected, terms: restTerms },
+      numcat(acc, firstTerm),
+    );
+
+    if (tryCat) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export function part2(input: string[]) {
-  return "TODO";
+  const equations = _.map(input, parseLine);
+
+  return _(equations)
+    .filter((eq) => solveEquationWithCat(eq))
+    .map("expected")
+    .sum();
 }
