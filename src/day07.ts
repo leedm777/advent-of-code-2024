@@ -3,21 +3,19 @@ import _ from "lodash";
 type Equation = {
   expected: number;
   terms: number[];
+  acc: number;
 };
 
 function parseLine(input: string): Equation {
   const [expectedStr, termsStr] = input.split(": ");
-  const terms = _(termsStr)
+  const [acc, ...terms] = _(termsStr)
     .split(" ")
     .map((s) => parseInt(s, 10))
     .value();
-  return { expected: parseInt(expectedStr, 10), terms };
+  return { expected: parseInt(expectedStr, 10), terms, acc };
 }
 
-function solveEquation(
-  { expected, terms }: Equation,
-  acc: number = 0,
-): boolean {
+function solveEquation({ expected, terms, acc }: Equation): boolean {
   if (terms.length === 0) {
     return acc === expected;
   }
@@ -28,20 +26,23 @@ function solveEquation(
 
   const [firstTerm, ...restTerms] = terms;
 
-  const tryAdd = solveEquation({ expected, terms: restTerms }, acc + firstTerm);
+  const tryAdd = solveEquation({
+    expected,
+    terms: restTerms,
+    acc: acc + firstTerm,
+  });
   if (tryAdd) {
     return true;
   }
 
-  if (acc !== 0) {
-    const tryMultiply = solveEquation(
-      { expected, terms: restTerms },
-      acc * firstTerm,
-    );
+  const tryMultiply = solveEquation({
+    expected,
+    terms: restTerms,
+    acc: acc * firstTerm,
+  });
 
-    if (tryMultiply) {
-      return true;
-    }
+  if (tryMultiply) {
+    return true;
   }
 
   return false;
@@ -60,10 +61,7 @@ function numcat(lhs: number, rhs: number) {
   return parseInt(`${lhs}${rhs}`, 10);
 }
 
-function solveEquationWithCat(
-  { expected, terms }: Equation,
-  acc: number = 0,
-): boolean {
+function solveEquationWithCat({ expected, terms, acc }: Equation): boolean {
   if (terms.length === 0) {
     return acc === expected;
   }
@@ -74,32 +72,33 @@ function solveEquationWithCat(
 
   const [firstTerm, ...restTerms] = terms;
 
-  const tryAdd = solveEquationWithCat(
-    { expected, terms: restTerms },
-    acc + firstTerm,
-  );
+  const tryAdd = solveEquationWithCat({
+    expected,
+    terms: restTerms,
+    acc: acc + firstTerm,
+  });
   if (tryAdd) {
     return true;
   }
 
-  if (acc !== 0) {
-    const tryMultiply = solveEquationWithCat(
-      { expected, terms: restTerms },
-      acc * firstTerm,
-    );
+  const tryMultiply = solveEquationWithCat({
+    expected,
+    terms: restTerms,
+    acc: acc * firstTerm,
+  });
 
-    if (tryMultiply) {
-      return true;
-    }
+  if (tryMultiply) {
+    return true;
+  }
 
-    const tryCat = solveEquationWithCat(
-      { expected, terms: restTerms },
-      numcat(acc, firstTerm),
-    );
+  const tryCat = solveEquationWithCat({
+    expected,
+    terms: restTerms,
+    acc: numcat(acc, firstTerm),
+  });
 
-    if (tryCat) {
-      return true;
-    }
+  if (tryCat) {
+    return true;
   }
 
   return false;
