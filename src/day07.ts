@@ -49,7 +49,12 @@ export function part1(input: string[]) {
 }
 
 function numcat(lhs: number, rhs: number) {
-  return parseInt(`${lhs}${rhs}`, 10);
+  for (let i = 10; i < 1e10; i *= 10) {
+    if (rhs < i) {
+      return lhs * i + rhs;
+    }
+  }
+  throw new Error(`${rhs} is waaaaay too big`);
 }
 
 export function part2(input: string[]) {
