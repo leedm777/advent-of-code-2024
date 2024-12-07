@@ -1,4 +1,4 @@
-import { mod, splitArray } from "./aoc";
+import { mod, splitArray } from "./aoc.ts";
 
 describe("aoc helpers", () => {
   describe("mod", () => {
