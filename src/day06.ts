@@ -98,8 +98,9 @@ export function part2(input: string[]) {
     _.forEach(row, (ch, colNum) => {
       if (ch === "." && visited[rowNum][colNum]) {
         // try placing an obstacle here
-        const nGrid = _.cloneDeep(grid);
-        _.set(nGrid, [rowNum, colNum], "#");
+        const nGrid = [...grid];
+        nGrid[rowNum] = [...grid[rowNum]];
+        nGrid[rowNum][colNum] = "#";
         if (doesGuardLoop({ grid: nGrid, guardPos, guardDir })) {
           ++numOptions;
         }
