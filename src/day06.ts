@@ -8,7 +8,11 @@ const Directions = [
 ];
 
 function move(pos: number[], direction: number[]) {
-  return _(pos).zip(direction).map(_.sum).value();
+  const r = [];
+  for (let i = 0; i < pos.length; ++i) {
+    r[i] = pos[i] + direction[i];
+  }
+  return r;
 }
 
 type Map = {
