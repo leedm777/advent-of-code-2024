@@ -43,8 +43,8 @@ function getVisited(map: Map) {
     if (_.get(grid, guardPos, " ") === "#") {
       throw new Error("Merged with obstruction!!!");
     }
-    _.set(visited, guardPos, true);
-    // _.set(grid, guardPos, "X");
+    visited[guardPos[0]][guardPos[1]] = true;
+    // grid[guardPos[0]][guardPos[1]] = "X";
     while (_.get(grid, move(guardPos, Directions[guardDir]), " ") === "#") {
       guardDir = (guardDir + 1) % Directions.length;
     }
@@ -69,14 +69,16 @@ export function part1(input: string[]) {
 function doesGuardLoop(map: Map) {
   const { grid } = map;
   let { guardPos, guardDir } = map;
-  const visited = _.map(grid, (line) => _.times(line.length, () => []));
+  const visited = _.map(grid, (line) =>
+    _.times(line.length, (): boolean[] => []),
+  );
 
-  while (_.get(visited, [...guardPos, guardDir], false) === false) {
-    if (_.get(grid, guardPos, " ") === " ") {
+  while (!visited[guardPos[0]]?.[guardPos[1]]?.[guardDir]) {
+    if (_.isNil(grid[guardPos[0]]?.[guardPos[1]])) {
       // guard escaped!!!
       return false;
     }
-    _.set(visited, [...guardPos, guardDir], true);
+    visited[guardPos[0]][guardPos[1]][guardDir] = true;
     while (_.get(grid, move(guardPos, Directions[guardDir]), " ") === "#") {
       guardDir = (guardDir + 1) % Directions.length;
     }
@@ -94,7 +96,7 @@ export function part2(input: string[]) {
   let numOptions = 0;
   _.forEach(grid, (row, rowNum) => {
     _.forEach(row, (ch, colNum) => {
-      if (ch === "." && _.get(visited, [rowNum, colNum], false)) {
+      if (ch === "." && visited[rowNum][colNum]) {
         // try placing an obstacle here
         const nGrid = _.cloneDeep(grid);
         _.set(nGrid, [rowNum, colNum], "#");
