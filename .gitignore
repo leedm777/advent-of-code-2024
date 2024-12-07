@@ -1,5 +1,6 @@
 *.tgz
 npm-debug.log*
+*.log
 .npm
 .eslintcache
 .idea/
