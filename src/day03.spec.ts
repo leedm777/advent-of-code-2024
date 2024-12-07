@@ -1,5 +1,5 @@
-import { part1, part2 } from "./day03";
-import { readInput } from "./aoc";
+import { part1, part2 } from "./day03.ts";
+import { readInput } from "./aoc.ts";
 
 const puzzleInput = readInput("./src/day03.txt");
 const exampleInput = [
