@@ -4,6 +4,14 @@ import { Command } from "commander";
 
 const program = new Command();
 
+type HasCode = { code: string };
+
+// TODO: probaby a way without disabling the linter rule
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function hasCode(err: any): err is HasCode {
+  return _.isString(err.code);
+}
+
 program
   .name("advent-of-code-2024")
   .description("AoC 2024 Solutions")
@@ -49,7 +57,7 @@ async function main(argv: string[]) {
         );
       } catch (err: unknown) {
         // ENOENT means the input file is missing; skip
-        if (err.code === "ENOENT") {
+        if (hasCode(err) && err.code === "ENOENT") {
           return;
         }
         throw err;
