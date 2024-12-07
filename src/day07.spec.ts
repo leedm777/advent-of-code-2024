@@ -23,7 +23,7 @@ describe("day07", () => {
     it("should work with the puzzle input", () => {
       const actual = part1(puzzleInput);
       expect(actual).not.toStrictEqual(5539206647201);
-      expect(actual).toStrictEqual("TODO");
+      expect(actual).toStrictEqual(5540634308362);
     });
   });
 

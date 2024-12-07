@@ -22,7 +22,7 @@ function solveEquation(
     return acc === expected;
   }
 
-  if (acc >= expected) {
+  if (acc > expected) {
     return false;
   }
 
