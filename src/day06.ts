@@ -79,7 +79,11 @@ function doesGuardLoop(map: Map) {
       return false;
     }
     visited[guardPos[0]][guardPos[1]][guardDir] = true;
-    while (_.get(grid, move(guardPos, Directions[guardDir]), " ") === "#") {
+    let m;
+    while (
+      (m = move(guardPos, Directions[guardDir])) &&
+      grid[m[0]]?.[m[1]] === "#"
+    ) {
       guardDir = (guardDir + 1) % Directions.length;
     }
     guardPos = move(guardPos, Directions[guardDir]);
