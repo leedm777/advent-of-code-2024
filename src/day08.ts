@@ -48,25 +48,50 @@ function findAntinodes(antennas: number[][]) {
   return antinodes;
 }
 
+function isOnGrid([rowNum, colNum]: number[], size: number[]) {
+  return rowNum >= 0 && rowNum < size[0] && colNum >= 0 && colNum < size[1];
+}
+
 export function part1(input: string[]) {
   const { size, antennas } = parseInput(input);
 
   return _(antennas)
     .mapValues(findAntinodes)
-    .mapValues((antinodes) =>
-      _.filter(
-        antinodes,
-        ([rowNum, colNum]) =>
-          rowNum >= 0 && rowNum < size[0] && colNum >= 0 && colNum < size[1],
-      ),
-    )
+    .mapValues((antinodes) => _.filter(antinodes, (pos) => isOnGrid(pos, size)))
     .flatMap()
     .sortBy()
     .uniqBy(([r, c]) => `${r},${c}`)
     .size();
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function findAllAntinodes(antennas: number[][], size: number[]) {
+  const antinodes = [];
+  for (let i = 0; i < antennas.length; ++i) {
+    for (let j = i + 1; j < antennas.length; ++j) {
+      const antenna1 = antennas[i];
+      const antenna2 = antennas[j];
+      const dist = difference(antenna2, antenna1);
+
+      for (let a = antenna1; isOnGrid(a, size); a = difference(a, dist)) {
+        antinodes.push(a);
+      }
+
+      for (let a = antenna2; isOnGrid(a, size); a = add(a, dist)) {
+        antinodes.push(a);
+      }
+    }
+  }
+
+  return antinodes;
+}
+
 export function part2(input: string[]) {
-  return "TODO";
+  const { size, antennas } = parseInput(input);
+
+  return _(antennas)
+    .mapValues((antennas) => findAllAntinodes(antennas, size))
+    .flatMap()
+    .sortBy()
+    .uniqBy(([r, c]) => `${r},${c}`)
+    .size();
 }

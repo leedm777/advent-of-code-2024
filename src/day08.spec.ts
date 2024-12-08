@@ -17,6 +17,19 @@ const exampleInput = [
   "............",
 ];
 
+const exampleInput2 = [
+  "T.........",
+  "...T......",
+  ".T........",
+  "..........",
+  "..........",
+  "..........",
+  "..........",
+  "..........",
+  "..........",
+  "..........",
+];
+
 describe("day08", () => {
   describe("part 1", () => {
     it("should work with the sample", () => {
@@ -29,15 +42,18 @@ describe("day08", () => {
     });
   });
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  describe.skip("part 2", () => {
+  describe("part 2", () => {
+    it("should work with the simpler sample", () => {
+      const actual = part2(exampleInput2);
+      expect(actual).toStrictEqual(9);
+    });
     it("should work with the sample", () => {
       const actual = part2(exampleInput);
-      expect(actual).toStrictEqual("TODO");
+      expect(actual).toStrictEqual(34);
     });
     it("should work with the puzzle input", () => {
       const actual = part2(puzzleInput);
-      expect(actual).toStrictEqual("TODO");
+      expect(actual).toStrictEqual(1285);
     });
   });
 });
