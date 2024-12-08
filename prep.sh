@@ -11,9 +11,6 @@ export TZ=America/New_York
 day=${1:-$(date +%d)}
 year=${2:-$(date +%Y)}
 
-# add leading 0 when manually entered
-day=$(printf "%02d" ${day})
-
 input=./src/day${day}.txt
 url=https://adventofcode.com/${year}/day/$((10#${day}))
 
@@ -46,8 +43,8 @@ export function part2(input: string[]) {
 EOF
 
 cat <<EOF > "src/day${day}.spec.ts"
-import { part1, part2 } from "./day${day}";
-import { readInput } from "./aoc";
+import { part1, part2 } from "./day${day}.ts";
+import { readInput } from "./aoc.ts";
 
 const puzzleInput = readInput("./src/day${day}.txt");
 const exampleInput = [
