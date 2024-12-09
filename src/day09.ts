@@ -41,7 +41,58 @@ export function part1([input]: string[]) {
     .sum();
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function part2(input: string[]) {
-  return "TODO";
+function sumOfSeries(n: number, first: number, last: number = first + n - 1) {
+  return (n * (first + last)) / 2;
+}
+
+export function part2([input]: string[]) {
+  let id = 0;
+  let offset = 0;
+  const blocks = _(input)
+    .map((ch) => parseInt(ch))
+    .map((numBlocks, idx) => {
+      const r = {
+        numBlocks,
+        id: (idx & 1) === 0 ? id++ : -1,
+        offset,
+      };
+      offset += numBlocks;
+      return r;
+    })
+    .reject(({ numBlocks }) => numBlocks === 0)
+    .value();
+
+  for (let i = blocks.length - 1; i >= 0; --i) {
+    if (blocks[i].id === -1) {
+      // skip free blocks
+      continue;
+    }
+
+    const fileBlock = blocks[i];
+    for (let j = 0; j < i; ++j) {
+      if (blocks[j].id !== -1) {
+        // skip file blocks
+        continue;
+      }
+      const freeBlock = blocks[j];
+
+      if (freeBlock.numBlocks >= fileBlock.numBlocks) {
+        // Move the file
+        fileBlock.offset = freeBlock.offset;
+        // allocate the free space
+        freeBlock.numBlocks -= fileBlock.numBlocks;
+        freeBlock.offset += fileBlock.numBlocks;
+        break;
+      }
+    }
+  }
+
+  return _(blocks)
+    .filter(({ id }) => id !== -1)
+    .map(
+      // Checksum is id * offset + id * (offset + 1) + id * (offset + 2) ...
+      // We can change that to id * sumOfSeries(offset, numBlocks)
+      ({ id, numBlocks, offset }) => id * sumOfSeries(numBlocks, offset),
+    )
+    .sum();
 }
