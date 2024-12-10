@@ -1,7 +1,7 @@
 import { part1, part2 } from "./day03.ts";
 import { readInput } from "./aoc.ts";
 
-const puzzleInput = readInput("./src/day03.txt");
+const puzzleInput = readInput("./inputs/day03.txt");
 const exampleInput = [
   "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))",
 ];

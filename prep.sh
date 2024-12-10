@@ -11,7 +11,7 @@ export TZ=America/New_York
 day=${1:-$(date +%d)}
 year=${2:-$(date +%Y)}
 
-input=./src/day${day}.txt
+input=./inputs/day${day}.txt
 url=https://adventofcode.com/${year}/day/$((10#${day}))
 
 if ! test -e "${input}"; then
@@ -46,7 +46,7 @@ cat <<EOF > "src/day${day}.spec.ts"
 import { part1, part2 } from "./day${day}.ts";
 import { readInput } from "./aoc.ts";
 
-const puzzleInput = readInput("./src/day${day}.txt");
+const puzzleInput = readInput("./inputs/day${day}.txt");
 const exampleInput = [
 ];
 

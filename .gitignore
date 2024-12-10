@@ -12,6 +12,7 @@ node_modules/
 
 # AoC prefers we not publish the inputs, so it's not as easy to totally steal
 # the site
-src/day*.txt
+inputs/
+
 # Don't leak my cookie file
 .cookies.txt

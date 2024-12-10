@@ -37,7 +37,7 @@ async function main(argv: string[]) {
 
       try {
         const dayStr = _.padStart(day.toString(10), 2, "0");
-        const puzzleInput = readInput(`./src/day${dayStr}.txt`);
+        const puzzleInput = readInput(`./inputs/day${dayStr}.txt`);
         const solver = await import(`./day${dayStr}.ts`);
 
         console.log(`Day ${day}:`);

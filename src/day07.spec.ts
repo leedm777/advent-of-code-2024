@@ -1,7 +1,7 @@
 import { part1, part2 } from "./day07.ts";
 import { readInput } from "./aoc.ts";
 
-const puzzleInput = readInput("./src/day07.txt");
+const puzzleInput = readInput("./inputs/day07.txt");
 const exampleInput = [
   "190: 10 19",
   "3267: 81 40 27",
