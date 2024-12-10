@@ -56,6 +56,47 @@ const exampleInputs: Example[] = [
   ],
 ];
 
+const exampleInputs2: Example[] = [
+  [
+    3,
+    [
+      ".....0.",
+      "..4321.",
+      "..5..2.",
+      "..6543.",
+      "..7..4.",
+      "..8765.",
+      "..9....",
+    ],
+  ],
+  [
+    13,
+    [
+      "..90..9",
+      "...1.98",
+      "...2..7",
+      "6543456",
+      "765.987",
+      "876....",
+      "987....",
+    ],
+  ],
+  [227, ["012345", "123456", "234567", "345678", "4.6789", "56789."]],
+  [
+    81,
+    [
+      "89010123",
+      "78121874",
+      "87430965",
+      "96549874",
+      "45678903",
+      "32019012",
+      "01329801",
+      "10456732",
+    ],
+  ],
+];
+
 describe("day10", () => {
   describe("part 1", () => {
     it.each(exampleInputs)("should score %s", (expected, exampleInput) => {
@@ -68,15 +109,14 @@ describe("day10", () => {
     });
   });
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  describe.skip("part 2", () => {
-    it("should work with the sample", () => {
-      const actual = part2(exampleInputs[exampleInputs.length - 1][1]);
-      expect(actual).toStrictEqual("TODO");
+  describe("part 2", () => {
+    it.each(exampleInputs2)("should score %s", (expected, exampleInput) => {
+      const actual = part2(exampleInput);
+      expect(actual).toStrictEqual(expected);
     });
     it("should work with the puzzle input", () => {
       const actual = part2(puzzleInput);
-      expect(actual).toStrictEqual("TODO");
+      expect(actual).toStrictEqual(1110);
     });
   });
 });

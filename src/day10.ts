@@ -35,7 +35,7 @@ type Cell = {
   height: number;
 };
 
-export function part1(input: string[]) {
+function parseInput(input: string[]) {
   const map = _.map(input, (line) => _.map(line, (ch) => parseInt(ch, 10)));
   const trailheads = _(map)
     .flatMap((row, rowNum) =>
@@ -46,13 +46,40 @@ export function part1(input: string[]) {
     )
     .filter(({ height }) => height === 0)
     .value();
+  return { map, trailheads };
+}
+
+export function part1(input: string[]) {
+  const { map, trailheads } = parseInput(input);
 
   return _(trailheads)
     .flatMap((th) => findSummits(map, th.pos))
     .size();
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function findPaths(map: number[][], pos: Pos): Pos[] {
+  const v = _.get(map, pos, -Infinity);
+  if (v === 9) {
+    return [pos];
+  }
+
+  return _(neighbors)
+    .flatMap((neighbor): Pos[] => {
+      const nPos = move(pos, neighbor) as Pos;
+      const nV = _.get(map, nPos, -Infinity);
+      if (nV === v + 1) {
+        return findPaths(map, nPos);
+      }
+      return [[-Infinity, -Infinity]];
+    })
+    .reject(([r]) => r === -Infinity)
+    .value();
+}
+
 export function part2(input: string[]) {
-  return "TODO";
+  const { map, trailheads } = parseInput(input);
+
+  return _(trailheads)
+    .flatMap((th) => findPaths(map, th.pos))
+    .size();
 }
