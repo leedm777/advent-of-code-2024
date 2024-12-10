@@ -38,3 +38,11 @@ export function splitArray<T>(arr: T[], fn: (elem: T) => boolean) {
     [[]] as T[][],
   );
 }
+
+export function move(pos: number[], direction: number[]) {
+  const r = [];
+  for (let i = 0; i < pos.length; ++i) {
+    r[i] = pos[i] + direction[i];
+  }
+  return r;
+}

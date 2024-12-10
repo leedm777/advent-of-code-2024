@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { move } from "./aoc.ts";
 
 const Directions = [
   [-1, 0], // start facing north
@@ -6,14 +7,6 @@ const Directions = [
   [1, 0],
   [0, -1],
 ];
-
-function move(pos: number[], direction: number[]) {
-  const r = [];
-  for (let i = 0; i < pos.length; ++i) {
-    r[i] = pos[i] + direction[i];
-  }
-  return r;
-}
 
 type Map = {
   grid: string[][];
