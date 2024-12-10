@@ -4,6 +4,9 @@
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "forceConsistentCasingInFileNames": true,
+    // compilation options
+    "sourceMap": true,
+    "incremental": true,
     "outDir": "lib"
   }
 }
