@@ -5,7 +5,8 @@ function blink(stones: number[]): number[] {
     stones,
     (acc, stone) => {
       if (stone === 0) {
-        return [...acc, 1];
+        acc.push(1);
+        return acc;
       }
 
       const numDigits = Math.floor(Math.log10(stone)) + 1;
@@ -13,10 +14,13 @@ function blink(stones: number[]): number[] {
         const factor = 10 ** (numDigits >> 1);
         const leftStone = Math.floor(stone / factor);
         const rightStone = stone - leftStone * factor;
-        return [...acc, leftStone, rightStone];
+        acc.push(leftStone);
+        acc.push(rightStone);
+        return acc;
       }
 
-      return [...acc, 2024 * stone];
+      acc.push(2024 * stone);
+      return acc;
     },
     [] as number[],
   );
@@ -33,7 +37,6 @@ export function part1([input]: string[], numIterations = 25) {
   return stones.length;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function part2(input: string[]) {
-  return "TODO";
+  return part1(input, 75);
 }
