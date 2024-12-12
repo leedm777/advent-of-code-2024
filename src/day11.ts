@@ -1,60 +1,42 @@
 import _ from "lodash";
+import { Map } from "immutable";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function blink(stones: number[]): number[] {
-  return _.reduce(
-    stones,
-    (acc, stone) => {
-      if (stone === 0) {
-        acc.push(1);
-        return acc;
-      }
+type Stones = Map<number, number>;
 
-      const numDigits = Math.floor(Math.log10(stone)) + 1;
-      if ((numDigits & 1) === 0) {
-        const factor = 10 ** (numDigits >> 1);
-        const leftStone = Math.floor(stone / factor);
-        const rightStone = stone - leftStone * factor;
-        acc.push(leftStone);
-        acc.push(rightStone);
-        return acc;
-      }
-
-      acc.push(2024 * stone);
-      return acc;
-    },
-    [] as number[],
-  );
+function addStone(stones: Stones, stone: number, count: number = 1): Stones {
+  const num = stones.get(stone, 0);
+  return stones.set(stone, num + count);
 }
 
-function blinkLen(stone: number, numBlinks: number): number {
-  if (numBlinks === 0) {
-    return 1;
-  }
+function blink(stones: Stones): Stones {
+  return stones.reduce((acc, count, stone) => {
+    if (stone === 0) {
+      return addStone(acc, 1, count);
+    }
 
-  if (stone === 0) {
-    return blinkLen(1, numBlinks - 1);
-  }
+    const numDigits = Math.floor(Math.log10(stone)) + 1;
+    if ((numDigits & 1) === 0) {
+      const factor = 10 ** (numDigits >> 1);
+      const leftStone = Math.floor(stone / factor);
+      const rightStone = stone - leftStone * factor;
+      return addStone(addStone(acc, leftStone, count), rightStone, count);
+    }
 
-  const numDigits = Math.floor(Math.log10(stone)) + 1;
-  if ((numDigits & 1) === 0) {
-    const factor = 10 ** (numDigits >> 1);
-    const leftStone = Math.floor(stone / factor);
-    const rightStone = stone - leftStone * factor;
-    return (
-      blinkLen(leftStone, numBlinks - 1) + blinkLen(rightStone, numBlinks - 1)
-    );
-  }
-
-  return blinkLen(2024 * stone, numBlinks - 1);
+    return addStone(acc, 2024 * stone, count);
+  }, Map<number, number>());
 }
 
 export function part1([input]: string[], numIterations = 25) {
-  return _(input)
+  let stones = _(input)
     .split(" ")
     .map((s) => parseInt(s, 10))
-    .map((stone) => blinkLen(stone, numIterations))
-    .sum();
+    .reduce((acc, stone) => addStone(acc, stone), Map<number, number>());
+
+  for (let i = 0; i < numIterations; ++i) {
+    stones = blink(stones);
+  }
+
+  return _.sum([...stones.values()]);
 }
 
 export function part2(input: string[]) {
