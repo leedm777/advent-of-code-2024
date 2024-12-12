@@ -65,15 +65,10 @@ export function part1(input: string[]) {
       };
 
       ++stats[regionId].area;
-      _(neighbors)
+      stats[regionId].perimeter += _(neighbors)
         .map((dir) => move(pos, dir))
-        .forEach((nPos) => {
-          if (ch === _.get(input, nPos, ".")) {
-            _.set(regions, nPos, regionId);
-          } else {
-            ++stats[regionId].perimeter;
-          }
-        });
+        .filter((nPos) => ch !== _.get(input, nPos, "."))
+        .size();
     });
   });
 
