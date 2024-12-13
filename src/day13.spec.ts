@@ -24,23 +24,18 @@ describe("day13", () => {
   describe("part 1", () => {
     it("should work with the sample", () => {
       const actual = part1(exampleInput);
-      expect(actual).toStrictEqual(480);
+      expect(actual).toStrictEqual(480n);
     });
     it("should work with the puzzle input", () => {
       const actual = part1(puzzleInput);
-      expect(actual).toStrictEqual(27105);
+      expect(actual).toStrictEqual(27105n);
     });
   });
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  describe.skip("part 2", () => {
-    it("should work with the sample", () => {
-      const actual = part2(exampleInput);
-      expect(actual).toStrictEqual("TODO");
-    });
+  describe("part 2", () => {
     it("should work with the puzzle input", () => {
       const actual = part2(puzzleInput);
-      expect(actual).toStrictEqual("TODO");
+      expect(actual).toStrictEqual(101726882250942n);
     });
   });
 });
