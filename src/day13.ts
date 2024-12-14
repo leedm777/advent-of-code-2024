@@ -67,7 +67,8 @@ export function part1(input: string[]) {
   return _(machines)
     .map(solveMachine)
     .map(([a, b]) => 3n * a + b)
-    .sum();
+    .sum()
+    .toString();
 }
 
 export function part2(input: string[]) {
@@ -84,5 +85,6 @@ export function part2(input: string[]) {
     }))
     .map(solveMachine)
     .map(([a, b]) => 3n * a + b)
-    .sum();
+    .sum()
+    .toString();
 }

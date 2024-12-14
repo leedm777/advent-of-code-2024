@@ -24,18 +24,18 @@ describe("day13", () => {
   describe("part 1", () => {
     it("should work with the sample", () => {
       const actual = part1(exampleInput);
-      expect(actual).toStrictEqual(480n);
+      expect(actual).toStrictEqual("480");
     });
     it("should work with the puzzle input", () => {
       const actual = part1(puzzleInput);
-      expect(actual).toStrictEqual(27105n);
+      expect(actual).toStrictEqual("27105");
     });
   });
 
   describe("part 2", () => {
     it("should work with the puzzle input", () => {
       const actual = part2(puzzleInput);
-      expect(actual).toStrictEqual(101726882250942n);
+      expect(actual).toStrictEqual("101726882250942");
     });
   });
 });
