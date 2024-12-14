@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { mod, move } from "./aoc.ts";
+import { mod } from "./aoc.ts";
 
 type Robot = {
   pos: [number, number];
@@ -75,49 +75,19 @@ export function part1(input: string[], size: [number, number] = [101, 103]) {
     .reduce(_.multiply);
 }
 
-const neighbors = [
-  [0, 1],
-  [1, 0],
-  [0, -1],
-  [-1, 0],
-];
-
 export function part2(input: string[], size: [number, number] = [101, 103]) {
   const robots = _.map(input, parseRobot);
   const moveRobots = (robots: Robot[]) =>
     _.map(robots, (r) => moveRobot(r, 1, size));
 
   let bots = robots;
-  for (let t = 0; t < 1000000; ++t, bots = moveRobots(bots)) {
-    const grid: string[][] = Array.from({ length: size[1] }, () =>
-      Array(size[0]).fill("."),
-    );
-    for (const bot of bots) {
-      _.set(grid, [bot.pos[1], bot.pos[0]], "X");
-    }
-
-    // had to get a hint, but since we're looking for a picture find the
-    // time when most of the bots are close together
-    let numNeighbors = 0;
-    for (let row = 0; row < size[1]; ++row) {
-      for (let col = 0; col < size[1]; ++col) {
-        if (_.get(grid, [row, col]) === "X") {
-          numNeighbors += _(neighbors)
-            .map((dir) => move([row, col], dir))
-            .filter((p) => _.get(grid, p) === "X")
-            .size();
-        }
-      }
-    }
-
-    // randomly selecting a "good enough" heuristic
-    if (numNeighbors > robots.length) {
-      // const str = _(grid)
-      //   .map((row) => row?.join(""))
-      //   .join("\n");
-      // console.clear();
-      // console.log(str);
-      // console.log(t);
+  for (let t = 0; t < 100_000; ++t, bots = moveRobots(bots)) {
+    // turns out for the picture, no bots are overlapping
+    const numCells = _(bots)
+      .map(({ pos }) => JSON.stringify(pos))
+      .uniq()
+      .size();
+    if (numCells === bots.length) {
       return t;
     }
   }
