@@ -9,8 +9,16 @@ const neighbors: [Dir, Dir, Dir, Dir] = [
   [-1, 0], // up
 ];
 
+enum Dirs {
+  Right = 0,
+  Down,
+  Left,
+  Up,
+}
+
 type Plot = {
   plant: string;
+  pos: [number, number];
   region: number;
   hasBorder: [boolean, boolean, boolean, boolean];
 };
@@ -40,6 +48,7 @@ type Region = {
   plant: string;
   area: number;
   perimeter: number;
+  numSides: number;
 };
 
 function parseInput(input: string[]) {
@@ -50,7 +59,7 @@ function parseInput(input: string[]) {
         const neighbotPlant = _.get(input, move(pos, dir), ".");
         return neighbotPlant !== plant;
       });
-      return { plant, region: NaN, hasBorder } as Plot;
+      return { plant, pos, region: NaN, hasBorder } as Plot;
     }),
   );
 
@@ -66,10 +75,8 @@ function parseInput(input: string[]) {
   return map;
 }
 
-export function part1(input: string[]) {
-  const map = parseInput(input);
-
-  return _.chain(map)
+function computeRegions(map: Plot[][]) {
+  return _(map)
     .flatten()
     .reduce((regions, plot) => {
       if (!regions[plot.region]) {
@@ -78,19 +85,62 @@ export function part1(input: string[]) {
           plant: plot.plant,
           area: 0,
           perimeter: 0,
+          numSides: 0,
         };
       }
 
-      ++regions[plot.region].area;
-      regions[plot.region].perimeter += _.sum(plot.hasBorder);
+      const region = regions[plot.region];
+      ++region.area;
+      region.perimeter += _.sum(plot.hasBorder);
+
+      // try counting corners to see if that gets us sides
+      const neighborPlots = _(neighbors)
+        .map((dir) => move(plot.pos, dir))
+        .map((pos) => _.get(map, pos) as Plot)
+        .value();
+
+      // A corner exists if the plot has edges on both sides, OR
+      // if the next plot on one side is _missing_ that edge
+      const hasCorner = (d1: Dirs, d2: Dirs) =>
+        plot.hasBorder[d1] &&
+        (plot.hasBorder[d2] || !neighborPlots[d2].hasBorder[d1]);
+
+      if (hasCorner(Dirs.Up, Dirs.Right)) {
+        ++region.numSides;
+      }
+
+      // bottom side
+      if (hasCorner(Dirs.Down, Dirs.Right)) {
+        ++region.numSides;
+      }
+
+      // left side
+      if (hasCorner(Dirs.Left, Dirs.Down)) {
+        ++region.numSides;
+      }
+
+      // right side
+      if (hasCorner(Dirs.Right, Dirs.Down)) {
+        ++region.numSides;
+      }
+
       return regions;
-    }, [] as Region[])
-    .map(({ area, perimeter }) => area * perimeter)
-    .sum()
-    .value();
+    }, [] as Region[]);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function part1(input: string[]) {
+  const map = parseInput(input);
+
+  return _(map)
+    .thru(computeRegions)
+    .map(({ area, perimeter }) => area * perimeter)
+    .sum();
+}
+
 export function part2(input: string[]) {
-  return "TODO";
+  const map = parseInput(input);
+  return _(map)
+    .thru(computeRegions)
+    .map((r) => r.area * r.numSides)
+    .sum();
 }
