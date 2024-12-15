@@ -21,6 +21,11 @@ if ! test -e "${input}"; then
     --fail \
     --cookie .cookies.txt \
     "${url}"/input
+
+  if test $? -ne 0; then
+    echo "${input} failed to download" >&2
+    exit 1
+  fi
 fi
 
 if test -e src/day"${day}".ts; then
