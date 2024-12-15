@@ -15,6 +15,7 @@ input=./inputs/day${day}.txt
 url=https://adventofcode.com/${year}/day/$((10#${day}))
 
 if ! test -e "${input}"; then
+  mkdir -p ./inputs/
   curl \
     --output "${input}" \
     --fail \
