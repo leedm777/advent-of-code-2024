@@ -1,5 +1,6 @@
 import fs from "fs";
 import _ from "lodash";
+import assert from "node:assert";
 
 export function readInput(filename: string) {
   return _.chain(fs.readFileSync(filename, "utf-8"))
@@ -123,4 +124,82 @@ export class MinHeap<T> {
   private priority(i: number) {
     return _.get(this.heap, i, { priority: Infinity }).priority;
   }
+}
+
+export function dijkstraHeuristic() {
+  return 0;
+}
+
+export function manhattanHeuristic(goal: [number, number]) {
+  return (p: [number, number]) =>
+    Math.abs(goal[0] - p[0]) + Math.abs(goal[1] + p[1]);
+}
+
+/**
+ * Interface for an aMAZEing graph.
+ */
+type Graph<T> = {
+  /** Starting node. */
+  start: T;
+  /** Returns true if a node is the goal. */
+  isGoal: (node: T) => boolean;
+  /** Heuristic to estimate distance to the goal. */
+  h: (node: T) => number;
+  /** Returns a list of all neighboring nodes. */
+  getNeighbors: (node: T) => T[];
+  /** Returns distance to a neighbor. */
+  getNeighborDistance: (node1: T, node2: T) => number;
+  /** Converts a node into a string to use as a key. */
+  keyify: (node: T) => string;
+};
+
+/**
+ * Implementation of A* from the Wikipedia algo
+ * see [](https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode)
+ *
+ * @param graph Graph of the maze to solve.
+ * @return Array of coordinates with the path found from start to goal.
+ */
+export function findPath<T>(graph: Graph<T>) {
+  const open = new MinHeap<T>();
+  open.insert(graph.h(graph.start), graph.start);
+  const cameFrom: { [key: string]: T } = {};
+
+  // g(n) -> cost of the cheapest path from start to n currently known.
+  const g: { [key: string]: number } = {};
+  const setCost = (node: T, cost: number) => {
+    g[graph.keyify(node)] = cost;
+  };
+  const getCost = (node: T) => _.get(g, graph.keyify(node), Infinity);
+  setCost(graph.start, 0);
+
+  let current = open.extract();
+  while (current && !graph.isGoal(current)) {
+    const neighbors = graph.getNeighbors(current);
+    for (const neighbor of neighbors) {
+      const cost =
+        getCost(current) + graph.getNeighborDistance(current, neighbor);
+      assert(cost < Infinity, `Should have cost for node ${current}`);
+      if (cost < getCost(neighbor)) {
+        // new path to the neighbor
+        cameFrom[graph.keyify(neighbor)] = current;
+        setCost(neighbor, cost);
+        // f(n) -> current best guess as to how short a path from start to
+        // finish can be if it goes through n
+        const f = cost + graph.h(neighbor);
+        open.insert(f, neighbor);
+      }
+    }
+
+    current = open.extract();
+  }
+
+  // walk back to the beginning to record the path
+  const path = [];
+  while (current) {
+    path.unshift(current);
+    current = cameFrom[graph.keyify(current)];
+  }
+
+  return path;
 }

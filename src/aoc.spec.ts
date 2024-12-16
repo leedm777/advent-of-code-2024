@@ -60,5 +60,15 @@ describe("aoc helpers", () => {
       expect(actual).toStrictEqual(["zero", "one", "two"]);
       expect(uut.isEmpty()).toStrictEqual(true);
     });
+    it("should peek at the next element", () => {
+      uut.insert(2, "two");
+      uut.insert(0, "zero");
+      uut.insert(1, "one");
+      uut.extract();
+      const actual = uut.peek();
+      expect(actual).toStrictEqual("one");
+      const extracted = uut.extract();
+      expect(extracted).toStrictEqual("one");
+    });
   });
 });
