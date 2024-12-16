@@ -61,11 +61,10 @@ describe("day15", () => {
     });
   });
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  describe.skip("part 2", () => {
+  describe("part 2", () => {
     it("should work with the sample", () => {
-      const actual = part2(exampleInputs[0][1]);
-      expect(actual).toStrictEqual("TODO");
+      const actual = part2(exampleInputs[1][1]);
+      expect(actual).toStrictEqual(9021);
     });
     it("should work with the puzzle input", () => {
       const actual = part2(puzzleInput);
