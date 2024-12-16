@@ -1,4 +1,4 @@
-import { mod, splitArray, move } from "./aoc.ts";
+import { mod, splitArray, move, MinHeap } from "./aoc.ts";
 
 describe("aoc helpers", () => {
   describe("mod", () => {
@@ -39,6 +39,26 @@ describe("aoc helpers", () => {
     it("should move a 3d position", () => {
       const actual = move([10, 9, 20], [-5, -9, 12]);
       expect(actual).toStrictEqual([5, 0, 32]);
+    });
+  });
+
+  describe("MinHeap", () => {
+    let uut: MinHeap<string>;
+    beforeEach(() => {
+      uut = new MinHeap();
+    });
+    it("should extract what was inserted", () => {
+      uut.insert(0, "zero");
+      const actual = uut.extract();
+      expect(actual).toStrictEqual("zero");
+    });
+    it("should extract in priority order", () => {
+      uut.insert(2, "two");
+      uut.insert(0, "zero");
+      uut.insert(1, "one");
+      const actual = [uut.extract(), uut.extract(), uut.extract()];
+      expect(actual).toStrictEqual(["zero", "one", "two"]);
+      expect(uut.isEmpty()).toStrictEqual(true);
     });
   });
 });
