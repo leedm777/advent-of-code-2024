@@ -130,15 +130,14 @@ export function dijkstraHeuristic() {
   return 0;
 }
 
-export function manhattanHeuristic(goal: [number, number]) {
-  return (p: [number, number]) =>
-    Math.abs(goal[0] - p[0]) + Math.abs(goal[1] + p[1]);
+export function manhattanHeuristic(goal: number[]) {
+  return (p: number[]) => Math.abs(goal[0] - p[0]) + Math.abs(goal[1] + p[1]);
 }
 
 /**
  * Interface for an aMAZEing graph.
  */
-type Graph<T> = {
+export type Graph<T> = {
   /** Starting node. */
   start: T;
   /** Returns true if a node is the goal. */
@@ -195,7 +194,7 @@ export function findPath<T>(graph: Graph<T>) {
   }
 
   // walk back to the beginning to record the path
-  const path = [];
+  const path: T[] = [];
   while (current) {
     path.unshift(current);
     current = cameFrom[graph.keyify(current)];
