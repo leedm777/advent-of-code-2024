@@ -46,6 +46,10 @@ const exampleInputs: [number, string[]][] = [
     ],
   ],
 ];
+const exampleInputs2: [number, string[]][] = [
+  [45, exampleInputs[0][1]],
+  [64, exampleInputs[1][1]],
+];
 
 describe("day16", () => {
   describe("part 1", () => {
@@ -62,15 +66,17 @@ describe("day16", () => {
     });
   });
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  describe.skip("part 2", () => {
-    it("should work with the sample", () => {
-      const actual = part2(exampleInputs[0][1]);
-      expect(actual).toStrictEqual("TODO");
-    });
+  describe("part 2", () => {
+    it.each(exampleInputs2)(
+      "should work with the sample -> %s",
+      (expected, exampleInput) => {
+        const actual = part2(exampleInput);
+        expect(actual).toStrictEqual(expected);
+      },
+    );
     it("should work with the puzzle input", () => {
       const actual = part2(puzzleInput);
-      expect(actual).toStrictEqual("TODO");
+      expect(actual).toStrictEqual(531);
     });
   });
 });
