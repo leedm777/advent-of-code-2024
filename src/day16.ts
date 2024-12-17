@@ -169,9 +169,6 @@ export function part2(grid: string[]) {
         setCost(neighbor, cost);
         open.insert(cost, neighbor);
       } else if (cost === getCost(neighbor)) {
-        if (graph.isGoal(neighbor)) {
-          console.log("NEW PATH TO GOAL");
-        }
         // a new path of the same cost
         cameFrom[graph.keyify(neighbor)].push(current);
       }

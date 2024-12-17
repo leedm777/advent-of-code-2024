@@ -32,7 +32,7 @@ export function part1(input: string[]) {
 
     if (_.get(grid, spacePos) === "#") {
       // hit a wall, no move
-      console.log(`Skip: ${moveCh}`);
+      // console.log(`Skip: ${moveCh}`);
       continue;
     }
 
@@ -50,12 +50,12 @@ export function part1(input: string[]) {
       botPos = boxPositions[0];
     }
 
-    console.log(
-      `Move: ${moveCh}\n` +
-        _(grid)
-          .map((row) => _.join(row, ""))
-          .join("\n"),
-    );
+    // console.log(
+    //   `Move: ${moveCh}\n` +
+    //     _(grid)
+    //       .map((row) => _.join(row, ""))
+    //       .join("\n"),
+    // );
   }
 
   return (
