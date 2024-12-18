@@ -30,24 +30,24 @@ const otherExamples: [Partial<Computer>, Partial<Computer>][] = [
     {
       c: 9,
       instructionPointer: 0,
-      program: List([2, 6]),
+      program: [2, 6],
     },
     { b: 1 },
   ],
-  [{ a: 10, program: List([5, 0, 5, 1, 5, 4]) }, { output: List([0, 1, 2]) }],
+  [{ a: 10, program: [5, 0, 5, 1, 5, 4] }, { output: List([0, 1, 2]) }],
   [
-    { a: 2024, program: List([0, 1, 5, 4, 3, 0]) },
+    { a: 2024, program: [0, 1, 5, 4, 3, 0] },
     { output: List([4, 2, 5, 6, 7, 7, 7, 7, 3, 1, 0]), a: 0 },
   ],
-  [{ b: 29, program: List([1, 7]) }, { b: 26 }],
-  [{ b: 2024, c: 43690, program: List([4, 0]) }, { b: 44354 }],
+  [{ b: 29, program: [1, 7] }, { b: 26 }],
+  [{ b: 2024, c: 43690, program: [4, 0] }, { b: 44354 }],
 ];
 
 const EmptyComputer = {
   a: 0,
   b: 0,
   c: 0,
-  program: List(),
+  program: [],
   instructionPointer: 0,
   output: List(),
 };
@@ -81,7 +81,7 @@ describe("day17", () => {
       let c = parseComputer(exampleInput2);
       c = c.set("a", 117440);
       const actual = runComputer(c);
-      expect(actual.program).toStrictEqual(actual.output);
+      expect(actual.program).toStrictEqual(actual.output.toJSON());
     });
     it("should work with the sample", () => {
       const actual = part2(exampleInput2);

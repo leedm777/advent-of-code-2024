@@ -12,7 +12,7 @@ export type Computer = {
   a: number;
   b: number;
   c: number;
-  program: List<number>;
+  program: number[];
   instructionPointer: number;
   output: List<number>;
 };
@@ -21,7 +21,7 @@ export const ComputerRecord = Record({
   a: 0,
   b: 0,
   c: 0,
-  program: List<number>(),
+  program: [],
   instructionPointer: 0,
   output: List<number>(),
 } as Computer);
@@ -45,20 +45,20 @@ export function parseComputer(input: string[]): RecordOf<Computer> {
     a,
     b,
     c,
-    program: List(program),
+    program,
     instructionPointer: 0,
     output: List(),
   });
 }
 
 function isHalted(c: RecordOf<Computer>): boolean {
-  return c.instructionPointer >= c.program.size;
+  return c.instructionPointer >= c.program.length;
 }
 
 export function tick(c: RecordOf<Computer>): RecordOf<Computer> {
   let instructionPointer = c.instructionPointer;
-  const opcode = c.program.get(instructionPointer++, NaN);
-  const operand = c.program.get(instructionPointer++, NaN);
+  const opcode = c.program[instructionPointer++];
+  const operand = c.program[instructionPointer++];
   const literal = operand;
 
   let combo = NaN;
@@ -161,7 +161,7 @@ export function part2(input: string[]) {
 
       // check the output
       if (c.output.size > validatedIdx) {
-        if (c.program.get(validatedIdx) !== c.output.get(validatedIdx)) {
+        if (c.program[validatedIdx] !== c.output.get(validatedIdx)) {
           // output does not match; continue on
           break;
         }
@@ -169,7 +169,7 @@ export function part2(input: string[]) {
       }
     }
 
-    if (isHalted(c) && c.program.equals(c.output)) {
+    if (isHalted(c) && _.isEqual(c.output.toJSON(), c.program)) {
       return a;
     }
   }
