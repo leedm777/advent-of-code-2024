@@ -1,4 +1,4 @@
-import { part1, part2, runComputer, Computer } from "./day17.ts";
+import { part1, part2, runComputer, parseComputer, Computer } from "./day17.ts";
 import { readInput } from "./aoc.ts";
 
 const puzzleInput = readInput("./inputs/day17.txt");
@@ -8,6 +8,13 @@ const exampleInput = [
   "Register C: 0",
   "",
   "Program: 0,1,5,4,3,0",
+];
+const exampleInput2 = [
+  "Register A: 2024",
+  "Register B: 0",
+  "Register C: 0",
+  "",
+  "Program: 0,3,5,4,3,0",
 ];
 
 const otherExamples: [Partial<Computer>, Partial<Computer>][] = [
@@ -56,11 +63,17 @@ describe("day17", () => {
     });
   });
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  describe.skip("part 2", () => {
+  describe("part 2", () => {
+    it("should output itself for the given program", () => {
+      // make sure I understand part 2...
+      const c = parseComputer(exampleInput2);
+      c.a = 117440;
+      const actual = runComputer(c);
+      expect(actual.program).toStrictEqual(actual.output);
+    });
     it("should work with the sample", () => {
-      const actual = part2(exampleInput);
-      expect(actual).toStrictEqual("TODO");
+      const actual = part2(exampleInput2);
+      expect(actual).toStrictEqual(117440);
     });
     it("should work with the puzzle input", () => {
       const actual = part2(puzzleInput);

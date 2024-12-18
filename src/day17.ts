@@ -16,7 +16,7 @@ export type Computer = {
   output: number[];
 };
 
-function parseComputer(input: string[]): Computer {
+export function parseComputer(input: string[]): Computer {
   const [aStr, bStr, cStr, , programStr] = input;
   const a = parseRegister(aStr);
   const b = parseRegister(bStr);
@@ -149,7 +149,27 @@ export function part1(input: string[]) {
   return _.join(c.output);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function part2(input: string[]) {
-  return "TODO";
+  const init = parseComputer(input);
+  for (let a = 0; a < Number.MAX_SAFE_INTEGER; ++a) {
+    let c = { ...init, a };
+    let validatedIdx = 0;
+    while (!isHalted(c)) {
+      c = tick(c);
+
+      // check the output
+      if (c.output.length > validatedIdx) {
+        if (c.program[validatedIdx] !== c.output[validatedIdx]) {
+          // output does not match; continue on
+          break;
+        }
+        ++validatedIdx;
+      }
+    }
+
+    if (isHalted(c) && _.isEqual(c.program, c.output)) {
+      return a;
+    }
+  }
+  return NaN;
 }
