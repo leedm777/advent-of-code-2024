@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { List, Record, RecordOf } from "immutable";
 
 function parseRegister(regStr: string) {
   return _(regStr)
@@ -11,12 +12,21 @@ export type Computer = {
   a: number;
   b: number;
   c: number;
-  program: number[];
+  program: List<number>;
   instructionPointer: number;
-  output: number[];
+  output: List<number>;
 };
 
-export function parseComputer(input: string[]): Computer {
+export const ComputerRecord = Record({
+  a: 0,
+  b: 0,
+  c: 0,
+  program: List<number>(),
+  instructionPointer: 0,
+  output: List<number>(),
+} as Computer);
+
+export function parseComputer(input: string[]): RecordOf<Computer> {
   const [aStr, bStr, cStr, , programStr] = input;
   const a = parseRegister(aStr);
   const b = parseRegister(bStr);
@@ -31,24 +41,24 @@ export function parseComputer(input: string[]): Computer {
     )
     .value();
 
-  return {
+  return ComputerRecord({
     a,
     b,
     c,
-    program,
+    program: List(program),
     instructionPointer: 0,
-    output: [],
-  };
+    output: List(),
+  });
 }
 
-function isHalted(c: Computer): boolean {
-  return c.instructionPointer >= c.program.length;
+function isHalted(c: RecordOf<Computer>): boolean {
+  return c.instructionPointer >= c.program.size;
 }
 
-export function tick(c: Computer): Computer {
+export function tick(c: RecordOf<Computer>): RecordOf<Computer> {
   let instructionPointer = c.instructionPointer;
-  const opcode = c.program[instructionPointer++];
-  const operand = c.program[instructionPointer++];
+  const opcode = c.program.get(instructionPointer++, NaN);
+  const operand = c.program.get(instructionPointer++, NaN);
   const literal = operand;
 
   let combo = NaN;
@@ -78,64 +88,56 @@ export function tick(c: Computer): Computer {
   switch (opcode) {
     case 0:
       // adv
-      return {
-        ...c,
+      return c.merge({
         instructionPointer,
         a: Math.floor(c.a / (1 << combo)),
-      };
+      });
     case 1:
       // bxl
-      return {
-        ...c,
+      return c.merge({
         instructionPointer,
         b: c.b ^ literal,
-      };
+      });
     case 2:
       // bst
-      return {
-        ...c,
+      return c.merge({
         instructionPointer,
         b: combo % 8,
-      };
+      });
     case 3:
       // jnz
-      return {
-        ...c,
+      return c.merge({
         instructionPointer: c.a === 0 ? instructionPointer : literal,
-      };
+      });
     case 4:
       // bxc
-      return {
-        ...c,
+      return c.merge({
         instructionPointer,
         b: c.b ^ c.c,
-      };
+      });
     case 5:
       // out
-      return {
-        ...c,
+      return c.merge({
         instructionPointer,
-        output: [...c.output, combo % 8],
-      };
+        output: c.output.push(combo % 8),
+      });
     case 6:
       // bdv
-      return {
-        ...c,
+      return c.merge({
         instructionPointer,
         b: Math.floor(c.a / (1 << combo)),
-      };
+      });
     case 7:
-      return {
-        ...c,
+      return c.merge({
         instructionPointer,
         c: Math.floor(c.a / (1 << combo)),
-      };
+      });
     default:
       throw new Error(`Invalid opcode ${opcode}`);
   }
 }
 
-export function runComputer(c: Computer) {
+export function runComputer(c: RecordOf<Computer>) {
   while (!isHalted(c)) {
     c = tick(c);
   }
@@ -146,20 +148,20 @@ export function part1(input: string[]) {
   let c = parseComputer(input);
   c = runComputer(c);
 
-  return _.join(c.output);
+  return c.output.join(",");
 }
 
 export function part2(input: string[]) {
   const init = parseComputer(input);
   for (let a = 0; a < Number.MAX_SAFE_INTEGER; ++a) {
-    let c = { ...init, a };
+    let c = init.set("a", a);
     let validatedIdx = 0;
     while (!isHalted(c)) {
       c = tick(c);
 
       // check the output
-      if (c.output.length > validatedIdx) {
-        if (c.program[validatedIdx] !== c.output[validatedIdx]) {
+      if (c.output.size > validatedIdx) {
+        if (c.program.get(validatedIdx) !== c.output.get(validatedIdx)) {
           // output does not match; continue on
           break;
         }
@@ -167,7 +169,7 @@ export function part2(input: string[]) {
       }
     }
 
-    if (isHalted(c) && _.isEqual(c.program, c.output)) {
+    if (isHalted(c) && c.program.equals(c.output)) {
       return a;
     }
   }
