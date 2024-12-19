@@ -134,6 +134,13 @@ export function manhattanHeuristic(goal: number[]) {
   return (p: number[]) => Math.abs(goal[0] - p[0]) + Math.abs(goal[1] + p[1]);
 }
 
+export const manhattanNeighbors = [
+  [0, 1], // right
+  [1, 0], // down
+  [0, -1], // left
+  [-1, 0], // up
+];
+
 /**
  * Interface for an aMAZEing graph.
  */
