@@ -42,15 +42,14 @@ describe("day18", () => {
     });
   });
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  describe.skip("part 2", () => {
+  describe("part 2", () => {
     it("should work with the sample", () => {
-      const actual = part2(exampleInput);
-      expect(actual).toStrictEqual("TODO");
+      const actual = part2(exampleInput, [6, 6]);
+      expect(actual).toStrictEqual("6,1");
     });
     it("should work with the puzzle input", () => {
       const actual = part2(puzzleInput);
-      expect(actual).toStrictEqual("TODO");
+      expect(actual).toStrictEqual("16,44");
     });
   });
 });
