@@ -14,27 +14,58 @@ export function part1(input: string[]) {
     .size();
 }
 
+type MatchMap = {
+  [ch: string]: {
+    term: boolean;
+    next: MatchMap;
+  };
+};
+
 export function countValidCombinations(
   desired: string,
-  avail: string[],
+  avail: MatchMap,
+  rootAvail: MatchMap,
 ): number {
-  if (desired === "") {
-    return 1;
+  const ch = desired.substring(0, 1);
+  const match = avail[ch];
+  if (!match) {
+    return 0;
   }
 
-  return _(avail)
-    .map((pattern) => {
-      if (!desired.startsWith(pattern)) {
-        return 0;
-      }
-      return countValidCombinations(desired.substring(pattern.length), avail);
-    })
-    .sum();
+  const rest = desired.substring(1);
+  if (rest === "") {
+    return match.term ? 1 : 0;
+  }
+
+  if (match.term) {
+    return (
+      countValidCombinations(rest, match.next, rootAvail) +
+      countValidCombinations(rest, rootAvail, rootAvail)
+    );
+  } else {
+    return countValidCombinations(rest, match.next, rootAvail);
+  }
 }
 
 export function part2(input: string[]) {
   const { desired, avail } = parseInput(input);
+  const m: MatchMap = {};
+  for (const str of avail) {
+    let r = m;
+    _.forEach(str, (ch, idx) => {
+      if (!r[ch]) {
+        r[ch] = {
+          term: false,
+          next: {},
+        };
+      }
+      if (idx === str.length - 1) {
+        r[ch].term = true;
+      }
+      r = r[ch].next;
+    });
+  }
   return _(desired)
-    .map((d) => countValidCombinations(d, avail))
+    .map((d) => countValidCombinations(d, m, m))
     .sum();
 }
