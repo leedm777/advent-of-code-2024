@@ -11,8 +11,8 @@ export const DirNeighbors: Keypad = {
   "<": ["v>"],
   v: ["<<", ">>", "^^"],
   ">": ["v<", "A^"],
-  "^": ["vv", "A>"],
-  A: [">v", "^<"],
+  "^": ["A>", "vv"],
+  A: ["^<", ">v"],
 };
 
 export const NumericNeighbors: Keypad = {
@@ -38,6 +38,25 @@ export const NumericNeighbors: Keypad = {
   A: ["3^", "0<"],
 };
 
+export function keyIn(sequence: string, keypad: Keypad): string {
+  const r = [];
+  let pos = "A";
+
+  for (const ch of sequence) {
+    if (ch === "A") {
+      r.push(pos);
+      continue;
+    }
+    const next = _.find(keypad[pos], ([, dir]) => dir === ch);
+    if (!next) {
+      throw new Error(`Illegal move from ${pos}: ${ch}`);
+    }
+    pos = next.substring(0, 1);
+  }
+
+  return r.join("");
+}
+
 export function moveKeypad(a: string, b: string, keypad: Keypad): string {
   const g: Graph<string> = {
     getNeighborDistance(node1: string, node2: string): number {
@@ -46,9 +65,9 @@ export function moveKeypad(a: string, b: string, keypad: Keypad): string {
       // prefer consecutive sequences in the same direction; provides shorter
       // paths for the robot controlling this robot
       if (dir1 === dir2) {
-        return 1;
+        return 10;
       }
-      return 10;
+      return 11;
     },
     getNeighbors(node: string): string[] {
       return keypad[node.substring(0, 1)];
@@ -85,6 +104,8 @@ function keyNumeric(sequence: string): string {
 }
 
 export function punchIt(numericSequence: string): string {
+  // TODO: The thing to try next is find _all_ equivalent paths for dir1,
+  // then again for dir2. Then we can just find the shorted dir3.
   const dir1 = keyNumeric(numericSequence);
   const dir2 = keyDirectional(dir1);
   const dir3 = keyDirectional(dir2);

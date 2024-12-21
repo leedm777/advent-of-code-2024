@@ -5,6 +5,8 @@ import {
   part2,
   punchIt,
   moveKeypad,
+  keyIn,
+  movesForSequence,
 } from "./day21.ts";
 import { readInput } from "./aoc.ts";
 import _ from "lodash";
@@ -45,6 +47,43 @@ describe("day21", () => {
             );
           }
         });
+      });
+    });
+    describe("troublesome example", () => {
+      it("should key in the right thing", () => {
+        // just double check the puzzle example
+        const expectedSequence =
+          "<v<A>>^AvA^A<vA<AA>>^AAvA<^A>AAvA^A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A";
+        const next1 = keyIn(expectedSequence, DirNeighbors);
+        const next2 = keyIn(next1, DirNeighbors);
+        const final = keyIn(next2, NumericNeighbors);
+        expect(final).toStrictEqual("379A");
+
+        // now where are we going wrong?
+        const dir1 = movesForSequence("379A", NumericNeighbors);
+        // correct length, but for 3->7 we got ^^<< instead of <<^^.
+        expect(dir1.length).toStrictEqual(next2.length);
+
+        const dir2 = movesForSequence(next2, DirNeighbors);
+        //     e: <A>Av<<AA>^AA>AvAA^A<vAAA>^A
+        //     i:  ^ A   <<  ^^ A >> A  vvv  A
+
+        //     a: <A>Av<<AA>^AA>AvAA^Av<AAA^>A
+        //     i:  ^ A   <<  ^^ A >> A  vvv  A
+
+        // correct length, but for v->A we got ^< instead of >^
+        expect(dir2.length).toStrictEqual(next1.length);
+
+        const dir3 = movesForSequence(next1, DirNeighbors);
+        console.log(`e: ${expectedSequence}\na: ${dir3}\ni: ${next1}`);
+        //     e: <v<A>>^AvA^A<vA<AA>>^AAvA<^A>AAvA^A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A
+        //     a: v<<A>>^AvA^Av<A<AA>>^AAvA<^A>AAvA^Av<A^>AA<A>Av<<A>A^>AAAvA<^A>A
+        //     i:    <   A > A  v <<   AA >  ^ AA > A  v  AA ^ A   < v  AAA >  ^ A
+
+        // correct length, but:
+        //   A->< we got v<< instead of <v<; probably irrelevant
+        //   A->v we got
+        expect(dir3).toStrictEqual(expectedSequence);
       });
     });
     describe("moveKeypad", () => {
