@@ -93,11 +93,7 @@ export function part1(input: string[], numPicosecondsSaved = 100) {
       return node.pos[0] === track.end[0] && node.pos[1] === track.end[1];
     },
     keyify(node: Node): string {
-      let s = `${node.pos[0]},${node.pos[1]}`;
-      if (node.cheatPos) {
-        s += `:${node.cheatPos[0]},${node.cheatPos[1]}`;
-      }
-      return s;
+      return `${node.pos[0]},${node.pos[1]}:${(node.cheatPos && "t") || "f"}`;
     },
     start: { pos: track.start },
   };
@@ -118,6 +114,7 @@ export function part1(input: string[], numPicosecondsSaved = 100) {
     const cheatedPathLength = p?.length;
     // console.log(`  ${cheatedPathLength}`);
     const timeSaved = uncheatedPathLength - cheatedPathLength;
+    console.log(timeSaved);
 
     if (timeSaved < numPicosecondsSaved) {
       break;
@@ -127,6 +124,7 @@ export function part1(input: string[], numPicosecondsSaved = 100) {
     const cheatPos = _.last(p)?.cheatPos;
     if (cheatPos) {
       _.set(antiCheats, cheatPos, true);
+      // console.log(`  ${JSON.stringify(cheatPos)}`);
     }
   }
 
