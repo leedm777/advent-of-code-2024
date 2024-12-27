@@ -176,7 +176,14 @@ export function findPath<T>(graph: Graph<T>) {
   const setCost = (node: T, cost: number) => {
     g[graph.keyify(node)] = cost;
   };
-  const getCost = (node: T) => _.get(g, graph.keyify(node), Infinity);
+  const getCost = (node: T) => {
+    const k = graph.keyify(node);
+    const c = g[k];
+    if (c == null) {
+      return Infinity;
+    }
+    return c;
+  };
   setCost(graph.start, 0);
 
   let current = open.extract();
