@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { findPath, Graph } from "./aoc.ts";
+import { findPath, Graph, manhattanNeighbors } from "./aoc.ts";
 
 type Racetrack = {
   start: number[];
@@ -34,13 +34,6 @@ type Node = {
   ch?: string;
 };
 
-const neighbors: number[][] = [
-  [-1, 0],
-  [0, -1],
-  [0, 1],
-  [1, 0],
-];
-
 export function part1(input: string[], numPicosecondsSaved = 100) {
   const track = parseInput(input);
   const antiCheats: boolean[][] = _.map(input, (line) =>
@@ -49,44 +42,42 @@ export function part1(input: string[], numPicosecondsSaved = 100) {
   const graph: Graph<Node> = {
     getNeighborDistance: _.constant(1),
     getNeighbors(node: Node): Node[] {
-      return _(neighbors)
-        .map(([dRow, dCol]) => ({
-          ...node,
-          pos: [node.pos[0] + dRow, node.pos[1] + dCol],
-        }))
-        .reject(({ pos: [rowNum, colNum] }) => {
-          return (
-            rowNum < 0 ||
-            colNum < 0 ||
-            rowNum >= antiCheats.length ||
-            colNum >= antiCheats[0].length
-          );
-        })
-        .map((n) => ({
-          ...n,
-          ch: _.get(track.map, n.pos, "#"),
-        }))
-        .filter((n) => {
-          if (n.ch === "#") {
-            if (n.cheatPos) {
-              return false;
-            }
-            if (_.get(antiCheats, n.pos, false)) {
-              return false;
-            }
+      const r: Node[] = [];
+      for (const [dRow, dCol] of manhattanNeighbors) {
+        const pos = [node.pos[0] + dRow, node.pos[1] + dCol];
+        const [rowNum, colNum] = pos;
+        if (
+          rowNum < 0 ||
+          colNum < 0 ||
+          rowNum >= antiCheats.length ||
+          colNum >= antiCheats[0].length
+        ) {
+          continue;
+        }
+
+        const ch = track.map[pos[0]][pos[1]];
+
+        if (ch === "#") {
+          if (node.cheatPos) {
+            continue;
           }
-          return true;
-        })
-        .map((n) => {
-          if (n.ch === "#") {
-            return {
-              ...n,
-              cheatPos: n.pos,
-            };
+
+          if (antiCheats[pos[0]]?.[pos[1]]) {
+            continue;
           }
-          return n;
-        })
-        .value();
+
+          r.push({
+            pos,
+            cheatPos: pos,
+          });
+        } else {
+          r.push({
+            ...node,
+            pos,
+          });
+        }
+      }
+      return r;
     },
     h: _.constant(0),
     isGoal(node: Node): boolean {
