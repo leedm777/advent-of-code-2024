@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { findPath, Graph, manhattanHeuristic } from "./aoc.ts";
+import { findPath, Graph } from "./aoc.ts";
 
 type Racetrack = {
   start: number[];
@@ -31,6 +31,7 @@ function parseInput(input: string[]) {
 type Node = {
   pos: number[];
   cheatPos?: number[];
+  ch?: string;
 };
 
 const neighbors: number[][] = [
@@ -42,7 +43,6 @@ const neighbors: number[][] = [
 
 export function part1(input: string[], numPicosecondsSaved = 100) {
   const track = parseInput(input);
-  const h = manhattanHeuristic(track.end);
   const antiCheats: boolean[][] = _.map(input, (line) =>
     _.map(line, _.constant(true)),
   );
@@ -54,9 +54,20 @@ export function part1(input: string[], numPicosecondsSaved = 100) {
           ...node,
           pos: [node.pos[0] + dRow, node.pos[1] + dCol],
         }))
+        .reject(({ pos: [rowNum, colNum] }) => {
+          return (
+            rowNum < 0 ||
+            colNum < 0 ||
+            rowNum >= antiCheats.length ||
+            colNum >= antiCheats[0].length
+          );
+        })
+        .map((n) => ({
+          ...n,
+          ch: _.get(track.map, n.pos, "#"),
+        }))
         .filter((n) => {
-          const ch = _.get(track.map, n.pos, "#");
-          if (ch === "#") {
+          if (n.ch === "#") {
             if (n.cheatPos) {
               return false;
             }
@@ -67,8 +78,7 @@ export function part1(input: string[], numPicosecondsSaved = 100) {
           return true;
         })
         .map((n) => {
-          const ch = _.get(track.map, n.pos, "#");
-          if (ch === "#") {
+          if (n.ch === "#") {
             return {
               ...n,
               cheatPos: n.pos,
@@ -78,18 +88,23 @@ export function part1(input: string[], numPicosecondsSaved = 100) {
         })
         .value();
     },
-    h(node: Node): number {
-      return h(node.pos);
-    },
+    h: _.constant(0),
     isGoal(node: Node): boolean {
-      return _.isEqual(node.pos, track.end);
+      return node.pos[0] === track.end[0] && node.pos[1] === track.end[1];
     },
     keyify(node: Node): string {
-      return `${JSON.stringify(node.pos)}:${JSON.stringify(node.cheatPos)}`;
+      let s = `${node.pos[0]},${node.pos[1]}`;
+      if (node.cheatPos) {
+        s += `:${node.cheatPos[0]},${node.cheatPos[1]}`;
+      }
+      return s;
     },
     start: { pos: track.start },
   };
+  // console.time("Setting baseline");
   const uncheatedPathLength = findPath(graph)?.length;
+  // console.timeEnd("Setting baseline");
+  // console.log(`  ${uncheatedPathLength}`);
   for (const line of antiCheats) {
     for (let i = 0; i < line.length; ++i) {
       line[i] = false;
@@ -97,8 +112,11 @@ export function part1(input: string[], numPicosecondsSaved = 100) {
   }
   let ctr = 0;
   while (true) {
+    // console.time("Finding");
     const p = findPath(graph);
+    // console.timeEnd("Finding");
     const cheatedPathLength = p?.length;
+    // console.log(`  ${cheatedPathLength}`);
     const timeSaved = uncheatedPathLength - cheatedPathLength;
 
     if (timeSaved < numPicosecondsSaved) {
