@@ -93,14 +93,11 @@ export function part1(input: string[], numPicosecondsSaved = 100) {
       return node.pos[0] === track.end[0] && node.pos[1] === track.end[1];
     },
     keyify(node: Node): string {
-      return `${node.pos[0]},${node.pos[1]}:${(node.cheatPos && "t") || "f"}`;
+      return `${node.pos[0]},${node.pos[1]}:${node.cheatPos ? "t" : "f"}`;
     },
     start: { pos: track.start },
   };
-  // console.time("Setting baseline");
   const uncheatedPathLength = findPath(graph)?.length;
-  // console.timeEnd("Setting baseline");
-  // console.log(`  ${uncheatedPathLength}`);
   for (const line of antiCheats) {
     for (let i = 0; i < line.length; ++i) {
       line[i] = false;
@@ -108,13 +105,9 @@ export function part1(input: string[], numPicosecondsSaved = 100) {
   }
   let ctr = 0;
   while (true) {
-    // console.time("Finding");
     const p = findPath(graph);
-    // console.timeEnd("Finding");
     const cheatedPathLength = p?.length;
-    // console.log(`  ${cheatedPathLength}`);
     const timeSaved = uncheatedPathLength - cheatedPathLength;
-    console.log(timeSaved);
 
     if (timeSaved < numPicosecondsSaved) {
       break;
@@ -124,7 +117,6 @@ export function part1(input: string[], numPicosecondsSaved = 100) {
     const cheatPos = _.last(p)?.cheatPos;
     if (cheatPos) {
       _.set(antiCheats, cheatPos, true);
-      // console.log(`  ${JSON.stringify(cheatPos)}`);
     }
   }
 
